@@ -34,7 +34,6 @@ class Product(models.Model):
     )
 
     title = models.CharField(max_length=250)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
     large_price = models.DecimalField(
         verbose_name=_("Large price"),
         help_text=_("Maximum 9999.99"),
@@ -59,14 +58,7 @@ class Product(models.Model):
         max_digits=6,
         decimal_places=2,
     )
-    discount_price = models.DecimalField(
-        verbose_name=_("Discount price"),
-        help_text=_("Maximum 9999.99"),
-        error_messages={
-            "name": { "max_length": _("The price must be between 0 and 9999.99")}},
-        max_digits=6,
-        decimal_places=2,
-    )
+
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     is_active = models.BooleanField(default=True)
     is_popular = models.BooleanField(default=False)
@@ -74,7 +66,7 @@ class Product(models.Model):
     color = models.CharField(max_length=10, choices=color_options, default='White')
     paper_type = models.CharField(max_length=10, choices=paper_options, default='Mate')
     category = models.ForeignKey('Category', related_name='prod_category', blank=True, null=True, on_delete=models.SET_NULL)
-    tags = models.ManyToManyField('Tag', related_name='prod_tags')
+    tags = models.ManyToManyField('Tag', related_name='prod_tags', blank=True)
 
     objects = models.Manager()  # default manager
     postobjects = ProdObjects()  # custom manager
@@ -90,7 +82,7 @@ class Product(models.Model):
 class Basket(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_basket')
-    products = models.ManyToManyField(Product, related_name='basket_products')
+    products = models.ManyToManyField(Product, related_name='basket_products', blank=True)
 
 
 class Tag(models.Model):
@@ -131,6 +123,6 @@ class ProductImage(models.Model):
 
 def post_user_created_signal(sender, instance, created, **kwargs):
     if created:
-        Basket.objects.create(user=instance)
+        Basket.objects.create(user=instance, products=[])
 
 post_save.connect(post_user_created_signal, sender=User)
