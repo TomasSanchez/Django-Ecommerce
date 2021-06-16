@@ -1,3 +1,4 @@
 {
-	"python.pythonPath": "Django/venv/bin/python"
+	"python.pythonPath": "Django/venv/bin/python",
+	"python.analysis.extraPaths": ["./Django"]
 }

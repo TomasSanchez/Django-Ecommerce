@@ -1,9 +1,7 @@
+from cart.models import Item
 from django.db import models
-from django.conf import settings
-from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
 
-User = settings.AUTH_USER_MODEL
 
 class Product(models.Model):
 
@@ -14,26 +12,8 @@ class Product(models.Model):
     class PopularProdObjects(models.Manager):
         def get_queryset(self):
             return super().get_queryset().filter(is_active=True).filter(is_popular=True)
+        # TODO test if Product.postobjects.all().filter(is_popular=True) works the same
 
-
-    sizes_options = (
-        ('L', 'Large'),
-        ('M', 'Medium'),
-        ('S', 'Small'),
-    )
-
-    color_options = (
-        ('White', 'white'),
-        ('Black', 'black'),
-        ('Wood', 'wood'),
-    )
-
-    paper_options = (
-        ('Glossy', 'glossy'),
-        ('Mate', 'mate')
-    )
-
-    title = models.CharField(max_length=250)
     large_price = models.DecimalField(
         verbose_name=_("Large price"),
         help_text=_("Maximum 9999.99"),
@@ -58,15 +38,13 @@ class Product(models.Model):
         max_digits=6,
         decimal_places=2,
     )
-
+    title = models.CharField(max_length=250)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     is_active = models.BooleanField(default=True)
     is_popular = models.BooleanField(default=False)
-    size = models.CharField(max_length=10, choices=sizes_options, default='M')
-    color = models.CharField(max_length=10, choices=color_options, default='White')
-    paper_type = models.CharField(max_length=10, choices=paper_options, default='Mate')
     category = models.ForeignKey('Category', related_name='prod_category', blank=True, null=True, on_delete=models.SET_NULL)
-    tags = models.ManyToManyField('Tag', related_name='prod_tags', blank=True)
+    tag = models.ManyToManyField('Tags', related_name='prod_tags', blank=True)
+    item = models.ForeignKey(Item, on_delete=models.SET_NULL, blank=True, null=True, related_name='item_product')
 
     objects = models.Manager()  # default manager
     postobjects = ProdObjects()  # custom manager
@@ -79,18 +57,12 @@ class Product(models.Model):
         return self.title 
 
 
-class Basket(models.Model):
+class Tags(models.Model):
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_basket')
-    products = models.ManyToManyField(Product, related_name='basket_products', blank=True)
-
-
-class Tag(models.Model):
-
-    tag = models.CharField(max_length=40)
+    title = models.CharField(max_length=40)
     
     def __str__(self):
-        return self.tag
+        return self.title
 
 
 class Category(models.Model):
@@ -120,9 +92,3 @@ class ProductImage(models.Model):
     class Meta:
         verbose_name = _("Product Image")
         verbose_name_plural = _("Product Images")
-
-def post_user_created_signal(sender, instance, created, **kwargs):
-    if created:
-        Basket.objects.create(user=instance, products=[])
-
-post_save.connect(post_user_created_signal, sender=User)
