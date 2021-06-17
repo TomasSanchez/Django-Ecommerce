@@ -4,7 +4,7 @@ from .views import UserList
 app_name = 'user'
 
 urlpatterns = [
-    path('view', UserList.as_view(), name='products_list'),
+    path('', UserList.as_view(), name='user_list'),
     # path('create', ProductCreate.as_view(), name='product_create'),
     # path('view/<int:pk>', Product.as_view(), name='product_create'),
 ]

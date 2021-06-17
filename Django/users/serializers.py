@@ -5,7 +5,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'user_name', 'password')
+        fields = ('email', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -19,12 +19,6 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
-    user_basket = serializers.SerializerMethodField('basket')
-
-    def basket(self, user):
-        return user.user_basket.products.values()
-        # .products.all().values()
-
     class Meta:
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name', 'user_name', 'start_date', 'user_basket')
+        fields = ('id', 'email', 'first_name', 'last_name')

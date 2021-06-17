@@ -8,8 +8,33 @@ from .serializers import ProductSerializer
 
 class ProductList(generics.ListAPIView):
     # permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
-    queryset = Product.objects.all()
+    queryset = Product.postobjects.all()
     serializer_class = ProductSerializer
+
+
+# This could be done in the front end by filterin on field is popular
+class PopularProductList(generics.ListAPIView):
+    queryset = Product.popularprodobjects.all()
+    serializer_class = ProductSerializer
+
+
+class CategoryProductsList(generics.ListAPIView):
+    
+    serializer_class = ProductSerializer
+    
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        queryset = Product.postobjects.filter(category=pk)
+        return queryset
+
+
+class TagProductsList(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        queryset = Product.postobjects.filter(tag=pk)
+        return queryset
 
 
 class ProductCreate(generics.CreateAPIView):
@@ -17,7 +42,7 @@ class ProductCreate(generics.CreateAPIView):
     serializer_class = ProductSerializer
 
 
-class Product(generics.RetrieveAPIView):
+class ProductDetail(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 

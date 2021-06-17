@@ -1,4 +1,3 @@
-from cart.models import Item
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -44,8 +43,6 @@ class Product(models.Model):
     is_popular = models.BooleanField(default=False)
     category = models.ForeignKey('Category', related_name='prod_category', blank=True, null=True, on_delete=models.SET_NULL)
     tag = models.ManyToManyField('Tags', related_name='prod_tags', blank=True)
-    item = models.ForeignKey(Item, on_delete=models.SET_NULL, blank=True, null=True, related_name='item_product')
-
     objects = models.Manager()  # default manager
     postobjects = ProdObjects()  # custom manager
     popularprodobjects = PopularProdObjects()
@@ -61,6 +58,10 @@ class Tags(models.Model):
 
     title = models.CharField(max_length=40)
     
+    class Meta:
+        verbose_name = _("Tag")
+        verbose_name_plural = _("Tags")
+
     def __str__(self):
         return self.title
 

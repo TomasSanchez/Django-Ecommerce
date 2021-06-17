@@ -5,7 +5,7 @@ from cart.models import Cart
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
-        fields = ["image", "alt_text"]
+        fields = ["image", "is_feature"]
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -17,17 +17,15 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     
     product_image = ImageSerializer(many=True, read_only=True)
-    in_bags = serializers.SerializerMethodField('get_in_basket_count') #FIX
-    price = serializers.SerializerMethodField('get_price')
     tags = serializers.SerializerMethodField('get_tags')
+    category = serializers.SerializerMethodField('get_category')
+
+    def get_category(self, product):
+        return product.category.title
 
     def get_tags(self, product):
-        return product.tags.values()
-
-    # FIX
-    def get_in_basket_count(self, product):
-        return product.cart_products.count()
+        return product.tag.values()
 
     class Meta:
         model = Product
-        fields = ('title', 'is_popular', 'price', 'size', 'color', 'paper_type', 'category', 'tags', 'in_bags', 'product_image', 'large_price', 'medium_price', 'small_price')
+        fields = ('id', 'large_price', 'medium_price', 'small_price', 'title', 'created_at', 'is_active', 'is_popular', 'category', 'tags', 'product_image')
