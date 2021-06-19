@@ -37,7 +37,8 @@ class ItemSerializer(serializers.ModelSerializer):
         for image in Item.product.product_image.values():
             if image['is_feature']:
                 return image
-        return Item.product.product_image.values()[0]['image'] or 'No images to display'
+        return 'No images to display' # FIX There should always be an image to display
+        # Item.product.product_image.values()[0]['image'] or
 
     class Meta:
         model = Item

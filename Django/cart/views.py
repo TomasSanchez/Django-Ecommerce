@@ -25,6 +25,8 @@ class AddItemToCart(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         product = Product.objects.get(id=request.data['product'])
+        if not(int(request.data['quantity'][0]) in range(0,11)):
+            return Response({'error': 'quantity should be between 1 and 10 inclusive'}, status=status.HTTP_400_BAD_REQUEST)
         if request.data['size'] == 'L':
             price = product.large_price
         elif request.data['size'] == 'M':
@@ -32,12 +34,9 @@ class AddItemToCart(generics.CreateAPIView):
         elif request.data['size'] == 'S':
             price = product.small_price
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'size appears to not be declared'},status=status.HTTP_400_BAD_REQUEST)
         user = self.request.user
         cart = Cart.objects.get(user=user)
-        print('---------------------------- ----------------------------- -----------------------------')
-        print(cart)
-        print('---------------------------- ----------------------------- -----------------------------')
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(price=price, cart=cart)
@@ -45,6 +44,7 @@ class AddItemToCart(generics.CreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
+# FIX / REMOVE Testing only
 class ItemsList(generics.ListAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer

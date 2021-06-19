@@ -5,13 +5,13 @@ from cart.models import Cart
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
-        fields = ["image", "is_feature"]
+        fields = ["id", "image", "is_feature"]
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ["title"]
+        fields = ["id", "title"]
 
 
 class ProductSerializer(serializers.ModelSerializer):
