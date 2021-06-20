@@ -5,7 +5,6 @@ import Pagination from "../components/Pagination";
 export default function Home({ posts }: any) {
 	const [pageNumber, setPageNumber] = useState(0);
 	const [pagePosts, setPagePosts] = useState(posts.data[pageNumber]);
-	console.log(posts.data[1].data[1].product_image[0].image);
 
 	const setPage = (pageIndex: any) => {
 		setPageNumber(pageIndex);
@@ -16,10 +15,6 @@ export default function Home({ posts }: any) {
 		<div>
 			<MainPosts posts={pagePosts} />
 			<Pagination page={pageNumber} setPage={setPage} meta={posts.meta} />
-			<img
-				src={posts.data[1].data[1].product_image[0].image}
-				alt='https://dummyimage.com/420x260'
-			/>
 		</div>
 	);
 }

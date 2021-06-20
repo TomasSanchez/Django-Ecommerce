@@ -1,15 +1,39 @@
+import { useEffect, useState } from "react";
+import Dropdown from "./Dropdown";
+
 const Navbar = () => {
+	// FIX This is fetching on every render, causing unnecesarry fetches, should be donde in getInitialProps
+	const [categories, setCategories] = useState();
+
+	const get_categories = async () => {
+		try {
+			const response = await fetch(
+				"http://127.0.0.1:8000/api/store/categories"
+			);
+			const categories = await response.json();
+			setCategories(categories);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+	useEffect(() => {
+		get_categories();
+	}, []);
+
 	return (
 		<header className='text-gray-600 body-font shadow-lg bg-gray-50'>
 			<div className='container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center'>
-				<nav className='flex lg:w-2/5 flex-wrap items-center text-base md:ml-auto'>
-					<a className='mr-5 hover:text-gray-900'>First Link</a>
+				<nav className='flex lg:w-2/5 flex-wrap items-center text-base '>
+					<h1>
+						<a href='/'>Home</a>
+					</h1>
+					<Dropdown categories={categories} />
+					<a className='mr-5 ml-2 hover:text-gray-900'>First Link</a>
 					<a className='mr-5 hover:text-gray-900'>Second Link</a>
 					<a className='mr-5 hover:text-gray-900'>Third Link</a>
-					<a className='hover:text-gray-900'>Fourth Link</a>
 				</nav>
 
-				<div className='lg:w-2/5 inline-flex lg:justify-end ml-5 lg:ml-0'>
+				<div className='lg:w-2/5 inline-flex lg:justify-end ml-auto'>
 					<button className='mr-5 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0'>
 						Login
 						<svg
@@ -43,3 +67,22 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+export async function getStaticProps() {
+	try {
+		const response = await fetch(
+			"http://127.0.0.1:8000/api/store/categories"
+		);
+		const categories = await response.json();
+
+		return {
+			props: { categories }, // will be passed to the page component as props
+		};
+	} catch (error) {
+		return {
+			props: {
+				posts: undefined,
+			},
+		};
+	}
+}

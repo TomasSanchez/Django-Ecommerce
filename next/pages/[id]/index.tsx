@@ -1,4 +1,37 @@
-const Produc = () => {
+import { useEffect, useState } from "react";
+
+const Product = ({ post }: any) => {
+	const [item, setItem] = useState({
+		product: post?.id,
+		size: "M",
+		color: "Wood",
+		paper_type: "Mate",
+		quantity: 1,
+		image:
+			post?.product_image.find((picture: any) => picture.is_feature) ||
+			"https://dummyimage.com/400x400", // || post?.product_image[0] indicating first picture if there are no feature images
+	});
+
+	const handleChange = (place: string, value: string | number) => {
+		setItem({ ...item, [place]: value });
+	};
+
+	// changing the price according to size
+	var price = post?.medium_price;
+	switch (item.size) {
+		case "S":
+			price = post?.small_price;
+			break;
+		case "M":
+			price = post?.medium_price;
+			break;
+		case "L":
+			price = post?.large_price;
+			break;
+		default:
+			break;
+	}
+
 	return (
 		<div>
 			<section className='text-gray-600 body-font overflow-hidden'>
@@ -11,10 +44,10 @@ const Produc = () => {
 						/>
 						<div className='lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0'>
 							<h2 className='text-sm title-font text-gray-500 tracking-widest'>
-								BRAND NAME
+								{post?.category.title}
 							</h2>
 							<h1 className='text-gray-900 text-3xl title-font font-medium mb-1'>
-								The Catcher in the Rye
+								{post?.title}
 							</h1>
 							<div className='flex mb-4'>
 								<span className='flex items-center'>
@@ -86,17 +119,40 @@ const Produc = () => {
 							<div className='flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5'>
 								<div className='flex'>
 									<span className='mr-3'>Color</span>
-									<button className='border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none' />
-									<button className='border-2 border-gray-300 ml-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none' />
-									<button className='border-2 border-gray-300 ml-1 bg-indigo-500 rounded-full w-6 h-6 focus:outline-none' />
+									<button
+										className='border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none'
+										onClick={() =>
+											handleChange("color", "Wood")
+										}
+									/>
+									<button
+										className='border-2 border-gray-300 ml-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none'
+										onClick={() =>
+											handleChange("color", "Black")
+										}
+									/>
+									<button
+										className='border-2 border-gray-300 ml-1 bg-indigo-500 rounded-full w-6 h-6 focus:outline-none'
+										onClick={() =>
+											handleChange("color", "White")
+										}
+									/>
 								</div>
 								<div className='flex ml-6 items-center'>
 									<span className='mr-3'>Size</span>
 									<div className='relative'>
-										<select className='rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10'>
-											<option>S</option>
-											<option>M</option>
-											<option>L</option>
+										<select
+											value={item.size}
+											onChange={(e: any) =>
+												handleChange(
+													"size",
+													e.target.value
+												)
+											}
+											className='rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10'>
+											<option value={"S"}>S</option>
+											<option value={"M"}>M</option>
+											<option value={"L"}>L</option>
 										</select>
 										<span className='absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center'>
 											<svg
@@ -115,9 +171,52 @@ const Produc = () => {
 										Paper Type
 									</span>
 									<div className='relative'>
-										<select className='rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10'>
-											<option>Mate</option>
-											<option>Glossy</option>
+										<select
+											value={item.paper_type}
+											onChange={(e: any) =>
+												handleChange(
+													"paper_type",
+													e.target.value
+												)
+											}
+											className='rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10'>
+											<option value={"Mate"}>Mate</option>
+											<option value={"Glossy"}>
+												Glossy
+											</option>
+										</select>
+										<span className='absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center'>
+											<svg
+												fill='none'
+												stroke='currentColor'
+												strokeLinecap='round'
+												strokeLinejoin='round'
+												strokeWidth={2}
+												className='w-4 h-4'
+												viewBox='0 0 24 24'>
+												<path d='M6 9l6 6 6-6' />
+											</svg>
+										</span>
+									</div>
+									{/*  */}
+									<span className='ml-4 mx-2'>Quantity</span>
+									<div className='relative'>
+										<select
+											value={item.quantity}
+											onChange={(e: any) =>
+												handleChange(
+													"quantity",
+													e.target.value
+												)
+											}
+											className='rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10'>
+											<option value={"1"}>1</option>
+											<option value={"2"}>2</option>
+											<option value={"3"}>3</option>
+											<option value={"4"}>4</option>
+											<option value={"5"}>5</option>
+											<option value={"6"}>6</option>
+											<option value={"7"}>7</option>
 										</select>
 										<span className='absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center'>
 											<svg
@@ -136,7 +235,7 @@ const Produc = () => {
 							</div>
 							<div className='flex'>
 								<span className='title-font font-medium text-2xl text-gray-900'>
-									$58.00
+									${price}
 								</span>
 								<button className='flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded'>
 									Add to Cart
@@ -150,4 +249,37 @@ const Produc = () => {
 	);
 };
 
-export default Produc;
+// const Product = () => {
+
+// 	const router = useRouter();
+
+// 	const get_post = async () => {
+// 		try {
+// 			const { id } = router.query;
+// 			const response = await fetch(
+// 				`http://127.0.0.1:8000/api/store/${id}`
+// 			);
+// 			// const post = await respose.json();
+// 			setPost(post);
+// 		} catch (error) {
+// 		}
+// 	};
+
+export async function getServerSideProps(context: any) {
+	const res = await fetch(
+		`http://127.0.0.1:8000/api/store/${context.params.id}`
+	);
+	const post = await res.json();
+
+	if (!post) {
+		return {
+			notFound: true,
+		};
+	}
+
+	return {
+		props: { post }, // will be passed to the page component as props
+	};
+}
+
+export default Product;

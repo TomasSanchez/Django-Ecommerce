@@ -21,7 +21,7 @@ class ProductSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField('get_category')
 
     def get_category(self, product):
-        return product.category.title
+        return {"title": product.category.title, "id": product.category.id}
 
     def get_tags(self, product):
         return product.tag.values()

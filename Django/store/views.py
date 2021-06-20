@@ -2,9 +2,14 @@ from rest_framework import generics, serializers
 from rest_framework.response import Response
 
 from cart.models import Cart
+from store.pagination import get_response_in_pages
 
 from .models import Product, Category
 from .serializers import CategorySerializer, ProductSerializer
+
+from django.conf import settings
+
+items_per_page = settings.ITEMS_PER_PAGE
 
 
 class ProductList(generics.ListAPIView):
@@ -20,27 +25,7 @@ class ProductList(generics.ListAPIView):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         
-        # IMPROVE
-        
-        items_per_page = 6
-        data = []
-        page_index = 0
-        page_data = []
-        for index in range(len(serializer.data)):
-            if ((index  % items_per_page == 0) and index != 0) or ():
-                data.insert(page_index, {'page':page_index,'data':page_data})
-                page_index += 1
-                page_data = []
-            page_data.append(serializer.data[index])
-        data.insert(page_index, {'page':page_index,'data':page_data})        
-        # print('--------------------------------------------- ---------------------------------------------')
-        response = {'meta': {
-            'totalCount': len(serializer.data),
-            'pageCount': len(data),
-            'items_per_page': items_per_page,
-            },
-            'data': data}
-        # print('--------------------------------------------- ---------------------------------------------')
+        response = get_response_in_pages(items_per_page, serializer)
         return Response(response)
         # return Response(serializer.data)
 
@@ -58,26 +43,7 @@ class PopularProductList(generics.ListAPIView):
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         
-        # IMPROVE
-        items_per_page = 6
-        data = []
-        page_index = 0
-        page_data = []
-        for index in range(len(serializer.data)):
-            if ((index  % items_per_page == 0) and index != 0) or ():
-                data.insert(page_index, {'page':page_index,'data':page_data})
-                page_index += 1
-                page_data = []
-            page_data.append(serializer.data[index])
-        data.insert(page_index, {'page':page_index,'data':page_data})        
-        # print('--------------------------------------------- ---------------------------------------------')
-        response = {'meta': {
-            'totalCount': len(serializer.data),
-            'pageCount': len(data),
-            'items_per_page': items_per_page,
-            },
-            'data': data}
-        # print('--------------------------------------------- ---------------------------------------------')
+        response = get_response_in_pages(items_per_page, serializer)
         return Response(response)
 
 
@@ -93,6 +59,17 @@ class CategoryProductsList(generics.ListAPIView):
         pk = self.kwargs['pk']
         queryset = Product.postobjects.filter(category=pk)
         return queryset
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        response = get_response_in_pages(items_per_page, serializer)
+        return Response(response)
+
 
 
 class TagProductsList(generics.ListAPIView):
@@ -102,6 +79,17 @@ class TagProductsList(generics.ListAPIView):
         pk = self.kwargs['pk']
         queryset = Product.postobjects.filter(tag=pk)
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        response = get_response_in_pages(items_per_page, serializer)
+        return Response(response)
+
 
 
 # FIX For creating a product, this should be available only to admin
