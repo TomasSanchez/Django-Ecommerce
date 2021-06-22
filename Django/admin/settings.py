@@ -131,3 +131,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000"
 ]
+CORS_ALLOW_HEADERS = ['content-disposition', 'accept-encoding',
+                      'content-type', 'accept', 'origin', 'authorization', 'credentials', 'X-CSRFToken']
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_EXPOSE_HEADERS = ["Content-Type", "X_CSRFToken"]
+
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
+
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = True

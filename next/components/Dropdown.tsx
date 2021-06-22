@@ -8,8 +8,6 @@ function classNames(...classes: any) {
 }
 
 export default function Dropdown({ categories }: any) {
-	console.log("desde dropdown", categories);
-
 	return (
 		<Menu as='div' className='relative inline-block text-left'>
 			{({ open }) => (
@@ -44,7 +42,7 @@ export default function Dropdown({ categories }: any) {
 							<div className='py-1'>
 								{categories &&
 									categories.map((category: any) => (
-										<Menu.Item>
+										<Menu.Item key={category.id}>
 											{({ active }) => (
 												<a
 													href='#'

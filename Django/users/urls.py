@@ -1,10 +1,11 @@
 from django.urls import path
-from .views import UserList
+from .views import login_set_cookie, get_csrf, login_view, logout_view
 
 app_name = 'user'
 
 urlpatterns = [
-    path('', UserList.as_view(), name='user_list'),
-    # path('create', ProductCreate.as_view(), name='product_create'),
-    # path('view/<int:pk>', Product.as_view(), name='product_create'),
+    path('login_set_cookie', login_set_cookie, name='login_set_cookie'),
+    path('get_csrf', get_csrf, name='get_csrf'),
+    path('login', login_view, name='login'),
+    path('logout', logout_view, name='logout'),
 ]
