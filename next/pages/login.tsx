@@ -1,10 +1,12 @@
 import { SyntheticEvent, useEffect } from "react";
 import { useState } from "react";
+import Cookies from "../ui/js-cookie";
+import Router from "next/router";
 
 //
-const Login = ({ csrf, token }: any) => {
-	// console.log("desde login:", token);
-	const [csrfToken, setCsrfToken] = useState("asd");
+const Login = () => {
+	const [csrfToken, setCsrfToken] = useState<string>("");
+	const [error, setError] = useState<string>("");
 	const [user, setUser] = useState({
 		email: "",
 		password: "",
@@ -19,40 +21,12 @@ const Login = ({ csrf, token }: any) => {
 		);
 
 		const jsResponse = await response.json();
-		// FIX
-		setCsrfToken(
-			document.cookie
-				?.split(";")
-				?.find((element) => element.includes("csrftoken"))
-				?.split("=")[1]
-		);
-		console.log(
-			document.cookie
-				?.split(";")
-				?.find((element) => element.includes("csrftoken"))
-				?.split("=")[1]
-		);
+		setCsrfToken(Cookies.get("csrftoken"));
 	};
 
 	useEffect(() => {
 		get_csrf();
 	}, []);
-
-	console.log(csrfToken);
-
-	// useEffect(() => {
-	// fetch("http://localhost:8000/api/users/get_csrf", {
-	// 	// credentials: "include",
-	// })
-	// 	.then((res) => {
-	// 		let csrfToken: any = res.headers.get("X-CSRFToken");
-	// 		setCsrfToken(csrfToken);
-	// 	})
-	// 	.catch((err) => {
-	// 		console.error(err);
-	// 	});
-	// }, []);
-	// setCsrfToken(token);
 
 	const handleSubmit = async (e: SyntheticEvent) => {
 		e.preventDefault();
@@ -63,24 +37,21 @@ const Login = ({ csrf, token }: any) => {
 			},
 			method: "POST",
 			credentials: "include",
-			body: JSON.stringify({
-				email: user.email,
-				password: user.password,
-			}),
+			body: JSON.stringify(user),
 		})
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error("Connecting problem");
 				}
+				console.log("response: ", response);
 			})
-			.then((data) => {
-				console.log(data);
+			.then((detail) => {
+				Router.push("/");
 				//   send('TOGGLE')
-				// Router.push('/dashboard');
 			})
 			.catch((err) => {
 				console.log(err);
-				//   setError("Username or password Incorrect");
+				setError("Username or password Incorrect");
 			});
 	};
 
@@ -92,6 +63,11 @@ const Login = ({ csrf, token }: any) => {
 						Sign in to your account
 					</h2>
 				</div>
+				{error && (
+					<h3 className='text-red-600 bg-gray-100 rounded-lg p-2'>
+						{error}
+					</h3>
+				)}
 				<form
 					className='mt-8 space-y-6'
 					action='#'
@@ -181,33 +157,4 @@ const Login = ({ csrf, token }: any) => {
 	);
 };
 
-// export async function getServerSideProps() {
-// 	const res = await fetch("http://localhost:8000/api/users/get_csrf", {
-// 		credentials: "include",
-// 	});
-// 	const token = res.headers.get("X-CSRFToken");
-// 	const csrf = await res.json();
-// 	console.log("token desde serverSideProps:", token);
-
-// 	if (!csrf) {
-// 		return {
-// 			notFound: true,
-// 		};
-// 	}
-
-// 	return {
-// 		props: { csrf, token }, // will be passed to the page component as props
-// 	};
-// }
-
 export default Login;
-
-// fetch("http://127.0.0.1:8000/api/users/get_csrf", {
-// 			credentials: "include",
-// 		})
-// 			.then((res) => {
-// 				let csrfToken = res.headers.get("X-CSRFToken");
-// 				setCsrfToken(csrfToken);
-// 			})
-// 			.catch((error) => console.error(error));
-// 		console.log("this ran first");

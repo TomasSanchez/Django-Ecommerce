@@ -7,6 +7,7 @@ const MainPosts = ({ posts }: any) => {
 						{posts.data.map((post: any) => (
 							<div
 								key={post.id}
+								// className='lg:w-1/4 md:w-1/2 p-4 '
 								className='lg:w-1/4 md:w-1/2 p-4 '
 								style={{ width: "33%" }}>
 								<a
@@ -14,7 +15,7 @@ const MainPosts = ({ posts }: any) => {
 									className='block relative h-48 rounded overflow-hidden'>
 									<img
 										className='object-cover object-center w-full h-full block'
-										src='https://dummyimage.com/420x260'
+										src='https://dummyimage.com/420x420'
 									/>
 								</a>
 								<div className='mt-4'>

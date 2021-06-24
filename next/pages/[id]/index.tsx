@@ -249,22 +249,6 @@ const Product = ({ post }: any) => {
 	);
 };
 
-// const Product = () => {
-
-// 	const router = useRouter();
-
-// 	const get_post = async () => {
-// 		try {
-// 			const { id } = router.query;
-// 			const response = await fetch(
-// 				`http://127.0.0.1:8000/api/store/${id}`
-// 			);
-// 			// const post = await respose.json();
-// 			setPost(post);
-// 		} catch (error) {
-// 		}
-// 	};
-
 export async function getServerSideProps(context: any) {
 	const res = await fetch(
 		`http://127.0.0.1:8000/api/store/${context.params.id}`
@@ -278,7 +262,7 @@ export async function getServerSideProps(context: any) {
 	}
 
 	return {
-		props: { post }, // will be passed to the page component as props
+		props: { post },
 	};
 }
 

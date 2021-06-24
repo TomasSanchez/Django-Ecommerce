@@ -15,12 +15,11 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 export default MyApp;
 
-// FIX For some reason it is not fetching
 MyApp.getInitialProps = async (appContext: any) => {
 	const appProps = await App.getInitialProps(appContext);
 	const response = await fetch("http://127.0.0.1:8000/api/store/categories");
 	const categories = await response.json();
-	console.log("desdeapp", categories); // not logging anything
+	console.log("desdeapp", categories);
 
 	return { ...appProps, categories: categories };
 };

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Dropdown from "./Dropdown";
 
+// const Navbar = ({ categories }: any) => {
 const Navbar = () => {
 	// FIX This is fetching on every render, causing unnecesarry fetches, should be donde in getInitialProps
 	const [categories, setCategories] = useState();
@@ -13,7 +14,7 @@ const Navbar = () => {
 			const categories = await response.json();
 			setCategories(categories);
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 		}
 	};
 	useEffect(() => {
