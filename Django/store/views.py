@@ -1,5 +1,8 @@
-from rest_framework import generics, serializers
+from django.conf import settings
+
+from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
 
 from cart.models import Cart
 from store.pagination import get_response_in_pages
@@ -7,7 +10,6 @@ from store.pagination import get_response_in_pages
 from .models import Product, Category
 from .serializers import CategorySerializer, ProductSerializer
 
-from django.conf import settings
 
 items_per_page = settings.ITEMS_PER_PAGE
 
@@ -91,13 +93,22 @@ class TagProductsList(generics.ListAPIView):
         return Response(response)
 
 
-
-# FIX For creating a product, this should be available only to admin
-class ProductCreate(generics.CreateAPIView):
+class ProductDetail(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
 
-class ProductDetail(generics.RetrieveAPIView):
+# FIX For creating a product, this should be available only to admin
+class ProductCreate(generics.CreateAPIView):
+    permission_classes = [IsAdminUser]
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
+
+
+
+# Development only REMOVE
+class AllProducts(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer

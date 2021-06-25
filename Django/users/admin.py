@@ -9,7 +9,7 @@ class UserAdminConfig(UserAdmin):
     ordering = ('-start_date',)
     list_display = ('email', 'first_name', 'id', 'is_active', 'is_staff')
     fieldsets = (
-        (None, {'fields': ('email', 'first_name','last_name',)}),
+        (None, {'fields': ('email', 'first_name','last_name', 'password')}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
     )
     

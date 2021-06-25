@@ -1,5 +1,4 @@
-import { SyntheticEvent, useEffect } from "react";
-import { useState } from "react";
+import { SyntheticEvent, useState, useEffect } from "react";
 import Cookies from "../ui/js-cookie";
 import Router from "next/router";
 
@@ -30,29 +29,29 @@ const Login = () => {
 
 	const handleSubmit = async (e: SyntheticEvent) => {
 		e.preventDefault();
-		fetch("http://localhost:8000/api/users/login", {
-			headers: {
-				"Content-Type": "application/json",
-				"X-CSRFToken": csrfToken,
-			},
-			method: "POST",
-			credentials: "include",
-			body: JSON.stringify(user),
-		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error("Connecting problem");
+		try {
+			const response = await fetch(
+				"http://localhost:8000/api/users/login",
+				{
+					headers: {
+						"Content-Type": "application/json",
+						"X-CSRFToken": csrfToken,
+					},
+					method: "POST",
+					credentials: "include",
+					body: JSON.stringify(user),
 				}
-				console.log("response: ", response);
-			})
-			.then((detail) => {
+			);
+			if (response.ok) {
 				Router.push("/");
-				//   send('TOGGLE')
-			})
-			.catch((err) => {
-				console.log(err);
+			} else {
 				setError("Username or password Incorrect");
-			});
+				throw new Error(error);
+			}
+			//   send('TOGGLE')
+		} catch (err) {
+			console.error(err);
+		}
 	};
 
 	return (

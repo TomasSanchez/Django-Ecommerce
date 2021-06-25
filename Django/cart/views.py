@@ -1,7 +1,8 @@
 from wsgiref import headers
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from store.models import Product
 
@@ -10,6 +11,7 @@ from .serializers import CartSerializer, ItemSerializer
 
 
 class CartView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
 
@@ -20,13 +22,16 @@ class CartView(generics.ListAPIView):
 
 
 class AddItemToCart(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]    
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
 
     def create(self, request, *args, **kwargs):
         product = Product.objects.get(id=request.data['product'])
+        # check quantity
         if not(int(request.data['quantity'][0]) in range(0,11)):
-            return Response({'error': 'quantity should be between 1 and 10 inclusive'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'quantity must be between 1 and 10 inclusive'}, status=status.HTTP_400_BAD_REQUEST)
+        # price based on size
         if request.data['size'] == 'L':
             price = product.large_price
         elif request.data['size'] == 'M':
@@ -37,6 +42,10 @@ class AddItemToCart(generics.CreateAPIView):
             return Response({'error': 'size appears to not be declared'},status=status.HTTP_400_BAD_REQUEST)
         user = self.request.user
         cart = Cart.objects.get(user=user)
+        # checking if item related to product is already in cart
+        for item in Item.objects.filter(cart=cart):
+            if item.product==product:
+                return Response({'error': 'item already in cart'},status=status.HTTP_400_BAD_REQUEST)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(price=price, cart=cart)

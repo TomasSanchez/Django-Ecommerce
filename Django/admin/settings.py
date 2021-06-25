@@ -123,6 +123,12 @@ AUTH_USER_MODEL = 'users.User'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media/"
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
+
 # Changing this could affect fron end display
 # sets the number of products items per page for pagination on front end
 ITEMS_PER_PAGE = 6

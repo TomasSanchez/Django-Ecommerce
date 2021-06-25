@@ -1,4 +1,9 @@
 from rest_framework import serializers
+from django.core import serializers as dj_serializers
+
+from store.serializers import ProductSerializer
+from store.models import Product
+
 from .models import Cart, Item
 
 class CartSerializer(serializers.ModelSerializer):
@@ -32,9 +37,10 @@ class CartSerializer(serializers.ModelSerializer):
 class ItemSerializer(serializers.ModelSerializer):
     
     image = serializers.SerializerMethodField('get_feature_image')
+    product = ProductSerializer()    
 
-    def get_feature_image(self, Item):
-        for image in Item.product.product_image.values():
+    def get_feature_image(self, item):
+        for image in item.product.product_image.values():
             if image['is_feature']:
                 return image
         return 'No images to display' # FIX There should always be an image to display
@@ -42,4 +48,4 @@ class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = ('product', 'size', 'color', 'paper_type', 'quantity', 'image', 'price')
+        fields = ('id', 'product', 'size', 'color', 'paper_type', 'quantity', 'image', 'price')

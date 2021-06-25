@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PopularProductList, ProductList, CategoryProductsList, TagProductsList, ProductDetail, ProductCreate, Categories
+from .views import AllProducts, PopularProductList, ProductList, CategoryProductsList, TagProductsList, ProductDetail, ProductCreate, Categories
 
 app_name = 'store'
 
@@ -12,4 +12,5 @@ urlpatterns = [
     path('category/<int:pk>', CategoryProductsList.as_view(), name='category_products_list'),# returns all products of a single category
     
     path('create', ProductCreate.as_view(), name='product_create'),                          # for admint to create new products
+    path('allproducts', AllProducts.as_view(), name='all_products'),                          # for admint to create new products
 ]
