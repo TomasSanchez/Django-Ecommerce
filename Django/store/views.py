@@ -98,12 +98,10 @@ class ProductDetail(generics.RetrieveAPIView):
     serializer_class = ProductSerializer
 
 
-# FIX For creating a product, this should be available only to admin
 class ProductCreate(generics.CreateAPIView):
     permission_classes = [IsAdminUser]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
 
 
 

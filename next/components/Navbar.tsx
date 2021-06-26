@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Dropdown from "./Dropdown";
 import Cookies from "../ui/js-cookie";
 import Router from "next/router";
+import { ContextAuth } from "./AuthContext";
+import { categoryType } from "../types/storeTypes";
 
-// const Navbar = ({ categories }: any) => {
 const Navbar = () => {
-	// FIX This is fetching on every render, causing unnecesarry fetches, should be donde in getInitialProps
-	const [categories, setCategories] = useState();
+	const [categories, setCategories] = useState<categoryType[]>();
+	const { isLogedIn, setIsLogedIn } = useContext(ContextAuth);
 
 	const get_categories = async () => {
 		try {
@@ -14,6 +15,7 @@ const Navbar = () => {
 				"http://127.0.0.1:8000/api/store/categories"
 			);
 			const categories = await response.json();
+
 			setCategories(categories);
 		} catch (error) {
 			console.error(error);
@@ -37,6 +39,7 @@ const Navbar = () => {
 				}
 			);
 			if (response.ok) {
+				setIsLogedIn(false);
 				Router.push("/");
 			}
 		} catch (error) {}
@@ -56,55 +59,61 @@ const Navbar = () => {
 				</nav>
 
 				<div className='lg:w-2/5 inline-flex lg:justify-end ml-auto'>
-					{/* if */}
-					<a
-						href='/login'
-						className='mr-5 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0'>
-						Login
-						<svg
-							fill='none'
-							stroke='currentColor'
-							strokeLinecap='round'
-							strokeLinejoin='round'
-							strokeWidth={2}
-							className='w-4 h-4 ml-1'
-							viewBox='0 0 24 24'>
-							<path d='M5 12h14M12 5l7 7-7 7' />
-						</svg>
-					</a>
-					<a
-						href='/signup'
-						className='inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0'>
-						SignUp
-						<svg
-							fill='none'
-							stroke='currentColor'
-							strokeLinecap='round'
-							strokeLinejoin='round'
-							strokeWidth={2}
-							className='w-4 h-4 ml-1'
-							viewBox='0 0 24 24'>
-							<path d='M5 12h14M12 5l7 7-7 7' />
-						</svg>
-					</a>
-					{/* else */}
-					<button
-						onClick={handleLogout}
-						className='inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0'>
-						Logout
-						<svg
-							fill='none'
-							stroke='currentColor'
-							strokeLinecap='round'
-							strokeLinejoin='round'
-							strokeWidth={2}
-							className='w-4 h-4 ml-1'
-							viewBox='0 0 24 24'>
-							<path d='M5 12h14M12 5l7 7-7 7' />
-						</svg>
-					</button>
-
-					{/* end */}
+					{!isLogedIn ? (
+						<div>
+							<a
+								href='/login'
+								className='mr-5 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0'>
+								Login
+								<svg
+									fill='none'
+									stroke='currentColor'
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth={2}
+									className='w-4 h-4 ml-1'
+									viewBox='0 0 24 24'>
+									<path d='M5 12h14M12 5l7 7-7 7' />
+								</svg>
+							</a>
+							<a
+								href='/signup'
+								className='inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0'>
+								SignUp
+								<svg
+									fill='none'
+									stroke='currentColor'
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth={2}
+									className='w-4 h-4 ml-1'
+									viewBox='0 0 24 24'>
+									<path d='M5 12h14M12 5l7 7-7 7' />
+								</svg>
+							</a>
+						</div>
+					) : (
+						<div>
+							<div className='inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0 mr-4'>
+								Username
+							</div>
+							<button
+								onClick={handleLogout}
+								className='inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0'>
+								Logout
+								<svg
+									fill='none'
+									stroke='currentColor'
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth={2}
+									className='w-4 h-4 ml-1'
+									viewBox='0 0 24 24'>
+									<path d='M5 12h14M12 5l7 7-7 7' />
+								</svg>
+							</button>
+						</div>
+					)}
 				</div>
 			</div>
 		</header>
@@ -112,22 +121,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-export async function getStaticProps() {
-	try {
-		const response = await fetch(
-			"http://127.0.0.1:8000/api/store/categories"
-		);
-		const categories = await response.json();
-
-		return {
-			props: { categories }, // will be passed to the page component as props
-		};
-	} catch (error) {
-		return {
-			props: {
-				posts: undefined,
-			},
-		};
-	}
-}

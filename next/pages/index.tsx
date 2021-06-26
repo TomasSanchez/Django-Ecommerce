@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react";
 import MainPosts from "../components/MainPosts";
 import Pagination from "../components/Pagination";
+import { pageData, metaType } from "../types/storeTypes";
 
-export default function Home({ posts }: any) {
-	const [pageNumber, setPageNumber] = useState(0);
-	const [pagePosts, setPagePosts] = useState(posts.data[pageNumber]);
+type dataType = {
+	meta: metaType;
+	data: pageData[];
+};
 
-	const setPage = (pageIndex: any) => {
+type propType = {
+	posts: dataType;
+};
+
+export default function Home({ posts }: propType) {
+	const [pageNumber, setPageNumber] = useState<number>(0);
+	const [pagePosts, setPagePosts] = useState<pageData>(
+		posts.data[pageNumber]
+	);
+
+	const setPage: (pageIndex: number) => void = (pageIndex: number) => {
 		setPageNumber(pageIndex);
 		setPagePosts(posts.data[pageIndex]);
 	};

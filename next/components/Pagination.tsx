@@ -1,7 +1,14 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid";
 import { SyntheticEvent } from "react";
+import { metaType } from "../types/storeTypes";
 
-const Pagination = ({ page, setPage, meta }: any) => {
+type propType = {
+	page: number;
+	setPage: (pageIndex: number) => void;
+	meta: metaType;
+};
+
+const Pagination = ({ page, setPage, meta }: propType) => {
 	const highlightedElement =
 		"z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium";
 

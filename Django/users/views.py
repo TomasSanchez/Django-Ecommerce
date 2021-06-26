@@ -1,19 +1,16 @@
 import json
 
-from django.contrib.auth import authenticate, login, get_user_model, logout
+from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import ensure_csrf_cookie
-from rest_framework.authentication import SessionAuthentication
 
-from rest_framework.permissions import IsAuthenticated
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import generics, status
+from rest_framework import status
 
-from .models import User
-from .serializers import RegisterUserSerializer, UserSerializer
+from .serializers import UserSerializer
 
 
 class CreateUser(APIView):
@@ -38,14 +35,14 @@ def login_view(request):
     data = json.loads(request.body)
     email = data.get("email")
     password = data.get("password")
-    
+
     if email is None or password is None:
         return JsonResponse(
             {"errors": {"__all__": "Please enter both username and password"}},
             status=400,
         )
     user = authenticate(email=email, password=password)
-    
+
     if user is not None:
         login(request, user)
         return JsonResponse({"detail": "User logged in successfully"})
@@ -58,11 +55,10 @@ def logout_view(request):
     return JsonResponse({"detail": "Logout Successful"})
 
 
-# REMOVE
-class WhoAmIView(APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+class Me(APIView):
 
     @staticmethod
     def get(request, format=None):
-        return JsonResponse({"username", request.user.username})
+        if request.user.is_authenticated:
+            return Response({request.user.first_name, request.user.last_name})
+        return Response({'AnonymousUser'})

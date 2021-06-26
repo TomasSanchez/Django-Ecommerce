@@ -21,5 +21,5 @@ def get_response_in_pages(items_per_page, serializer):
 # returns data in the way of 
 # {
 #   meta: { totalCount: 8, pageCount: 2, items_per_page: 6 },
-#   data: [ { page: 0, data: [Array] }, { page: 1, data: [Array] } ]
+#   data: [ { page: 0, data: [{Obj1},{Ojb2},{Obj3}] }, { page: 1, data: [{Obj1},{Ojb2},{Obj3}] } ]
 # }

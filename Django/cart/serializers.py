@@ -1,8 +1,6 @@
 from rest_framework import serializers
-from django.core import serializers as dj_serializers
 
 from store.serializers import ProductSerializer
-from store.models import Product
 
 from .models import Cart, Item
 

@@ -1,30 +1,34 @@
-import { SyntheticEvent, useState, useEffect } from "react";
+import { SyntheticEvent, useState, useEffect, useContext } from "react";
 import Cookies from "../ui/js-cookie";
 import Router from "next/router";
+import { ContextAuth } from "../components/AuthContext";
 
-//
+type userType = {
+	email: string;
+	password: string;
+};
+
 const Login = () => {
 	const [csrfToken, setCsrfToken] = useState<string>("");
 	const [error, setError] = useState<string>("");
-	const [user, setUser] = useState({
+	const [user, setUser] = useState<userType>({
 		email: "",
 		password: "",
 	});
+	const { isLogedIn, setIsLogedIn } = useContext(ContextAuth);
 
 	const get_csrf = async () => {
-		const response = await fetch(
-			"http://localhost:8000/api/users/get_csrf",
-			{
-				credentials: "include",
-			}
-		);
-
-		const jsResponse = await response.json();
+		await fetch("http://localhost:8000/api/users/get_csrf", {
+			credentials: "include",
+		});
 		setCsrfToken(Cookies.get("csrftoken"));
 	};
 
 	useEffect(() => {
 		get_csrf();
+		if (isLogedIn) {
+			Router.push("/");
+		}
 	}, []);
 
 	const handleSubmit = async (e: SyntheticEvent) => {
@@ -43,6 +47,8 @@ const Login = () => {
 				}
 			);
 			if (response.ok) {
+				setIsLogedIn(true);
+				localStorage.setItem("isLogedIn", "true");
 				Router.push("/");
 			} else {
 				setError("Username or password Incorrect");

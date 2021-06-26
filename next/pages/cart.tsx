@@ -1,6 +1,11 @@
 import { useState } from "react";
+import { itemType } from "../types/storeTypes";
 
-const Cart = ({ items }: any) => {
+type itemsType = {
+	items: itemType[];
+};
+
+const Cart = ({ items }: itemsType) => {
 	const [total, setTotal] = useState(0);
 
 	return (
@@ -16,7 +21,7 @@ const Cart = ({ items }: any) => {
 						className='flex flex-wrap -m-4 border-l-2 border-r-2'
 						style={{ width: "90%" }}>
 						{/* begginning of content */}
-						{items.map((item: any) => (
+						{items.map((item: itemType) => (
 							<div
 								key={item.id}
 								className='p-4 lg:w-1/2 border-b-2'
@@ -51,7 +56,8 @@ const Cart = ({ items }: any) => {
 												</div>
 												<div>
 													${" "}
-													{item.price * item.quantity}
+													{parseInt(item.price) *
+														item.quantity}
 												</div>
 											</div>
 										</div>
@@ -74,6 +80,7 @@ export async function getStaticProps() {
 	try {
 		const response = await fetch("http://127.0.0.1:8000/api/cart/items");
 		const items = await response.json();
+		console.log("items: ", items);
 
 		return {
 			props: { items }, // will be passed to the page component as props

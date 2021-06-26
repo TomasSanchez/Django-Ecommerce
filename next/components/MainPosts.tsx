@@ -1,10 +1,16 @@
-const MainPosts = ({ posts }: any) => {
+import { productType, pageData } from "../types/storeTypes";
+
+type propType = {
+	posts: pageData;
+};
+
+const MainPosts = ({ posts }: propType) => {
 	return (
 		<div>
 			<section className='text-gray-600 body-font'>
 				<div className='container px-5 py-10 mt-16 mx-auto'>
 					<div className='outer flex flex-row flex-wrap -m-4'>
-						{posts.data.map((post: any) => (
+						{posts.data.map((post: productType) => (
 							<div
 								key={post.id}
 								// className='lg:w-1/4 md:w-1/2 p-4 '
