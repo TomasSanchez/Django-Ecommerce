@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from store.models import Product
 
@@ -96,5 +96,22 @@ class UpdateDeleteItem(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        pk = kwargs.pop('pk')
+        attr = kwargs.pop('attr')
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        print('-------------------------------1---------------------------------')
+        print(request.data)
+        print('-------------------------------1---------------------------------')
+        serializer.is_valid(raise_exception=True)
+        serializer.save(update_fields=[attr])
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+        return Response(serializer.data)        
 
 

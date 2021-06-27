@@ -1,23 +1,15 @@
 import { SyntheticEvent } from "react";
 import { useState } from "react";
-import { productType, imageType } from "../../types/storeTypes";
+import { productType, imageType, rawItemType } from "../../types/storeTypes";
 import Cookies from "../../ui/js-cookie";
 
 type propType = {
 	post: productType;
 };
-type itemType = {
-	product: number;
-	size: string;
-	color: string;
-	paper_type: string;
-	quantity: number;
-	image: imageType | string;
-};
 
 const Product = ({ post }: propType) => {
 	const [error, setError] = useState<string>("");
-	const [item, setItem] = useState<itemType>({
+	const [item, setItem] = useState<rawItemType>({
 		product: post.id,
 		size: "M",
 		color: "Wood",
@@ -167,19 +159,19 @@ const Product = ({ post }: propType) => {
 									<button
 										className='border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none'
 										onClick={() =>
-											handleChange("color", "Wood")
+											handleChange("color", "White")
 										}
 									/>
 									<button
-										className='border-2 border-gray-300 ml-1 bg-gray-700 rounded-full w-6 h-6 focus:outline-none'
+										className='border-2 border-gray-300 ml-1 bg-gray-900 rounded-full w-6 h-6 focus:outline-none'
 										onClick={() =>
 											handleChange("color", "Black")
 										}
 									/>
 									<button
-										className='border-2 border-gray-300 ml-1 bg-indigo-500 rounded-full w-6 h-6 focus:outline-none'
+										className='border-2 border-gray-300 ml-1 bg-yellow-800 rounded-full w-6 h-6 focus:outline-none'
 										onClick={() =>
-											handleChange("color", "White")
+											handleChange("color", "Wood")
 										}
 									/>
 								</div>

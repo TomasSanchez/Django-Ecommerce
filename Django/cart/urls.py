@@ -7,5 +7,5 @@ urlpatterns = [
     # path('', CartView.as_view(), name='cart_view'), REMOVE Unused
     path('', ItemsList.as_view(), name='items_list'),
     path('add', AddItemToCart.as_view(), name='add_to_cart'),
-    path('<int:pk>', UpdateDeleteItem.as_view(), name='update_delete_item')
+    path('<int:pk>/<str:attr>', UpdateDeleteItem.as_view(), name='update_delete_item')
 ]

@@ -40,6 +40,15 @@ export type itemType = {
 	price: string;
 };
 
+export type rawItemType = {
+	product: number;
+	size: string;
+	color: string;
+	paper_type: string;
+	quantity: number;
+	image: imageType | string;
+};
+
 export type pageData = {
 	page: number;
 	data: productType[];
