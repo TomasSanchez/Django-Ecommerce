@@ -1,13 +1,56 @@
-import { useState } from "react";
-import { itemType } from "../types/storeTypes";
+import { useContext, useEffect, useState } from "react";
+import { itemType, cart_info } from "../types/storeTypes";
+import { ContextAuth } from "../components/AuthContext";
+import Cookies from "../ui/js-cookie";
+import Router from "next/router";
+import { SyntheticEvent } from "react";
 
-type itemsType = {
-	items: itemType[];
+type cartType = {
+	cart_info: cart_info;
+	items: itemType[] | undefined;
 };
 
-const Cart = ({ items }: itemsType) => {
+const Cart = () => {
 	const [total, setTotal] = useState(0);
+	const [cart, setCart] = useState<cartType>();
+	const { isLogedIn, setIsLogedIn } = useContext(ContextAuth);
 
+	const get_cart = async () => {
+		try {
+			const response = await fetch("http://localhost:8000/api/cart/", {
+				credentials: "include",
+			});
+
+			if (response.ok) {
+				const cart = await response.json();
+				console.log("cart: ", cart);
+
+				setCart(cart);
+			} else {
+				Router.push("/");
+				throw new Error("You need to log in to acces cart");
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const handleRemove = async (id: number) => {
+		const response = await fetch(`http://localhost:8000/api/cart/${id}`, {
+			headers: {
+				"Content-Type": "application/json",
+				"X-CSRFToken": Cookies.get("csrftoken"),
+			},
+			method: "DELETE",
+			credentials: "include",
+		});
+		if (response.ok) {
+			get_cart();
+		}
+	};
+	useEffect(() => {
+		get_cart();
+	}, []);
 	return (
 		<div>
 			<section className='text-gray-600 body-font'>
@@ -21,7 +64,7 @@ const Cart = ({ items }: itemsType) => {
 						className='flex flex-wrap -m-4 border-l-2 border-r-2'
 						style={{ width: "90%" }}>
 						{/* begginning of content */}
-						{items.map((item: itemType) => (
+						{cart?.items?.map((item: itemType) => (
 							<div
 								key={item.id}
 								className='p-4 lg:w-1/2 border-b-2'
@@ -35,7 +78,7 @@ const Cart = ({ items }: itemsType) => {
 									<div className='flex-grow sm:pl-8 flex justify-between'>
 										<div className='flex flex-col'>
 											<h2 className='title-font font-medium text-lg text-gray-900'>
-												{item.product.title}
+												{item.product.title} {item.id}
 											</h2>
 											<h3 className='text-gray-500 mb-3'>
 												{item.product.category.title}
@@ -60,6 +103,15 @@ const Cart = ({ items }: itemsType) => {
 														item.quantity}
 												</div>
 											</div>
+											<div>
+												<button
+													onClick={() =>
+														handleRemove(item.id)
+													}
+													className='text-red-400 hover:bg-red-200 rounded-md p-1 mt-5'>
+													Remove
+												</button>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -75,21 +127,3 @@ const Cart = ({ items }: itemsType) => {
 };
 
 export default Cart;
-
-export async function getStaticProps() {
-	try {
-		const response = await fetch("http://127.0.0.1:8000/api/cart/items");
-		const items = await response.json();
-		console.log("items: ", items);
-
-		return {
-			props: { items }, // will be passed to the page component as props
-		};
-	} catch (error) {
-		return {
-			props: {
-				items: undefined,
-			},
-		};
-	}
-}

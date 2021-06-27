@@ -1,5 +1,6 @@
 import json
 
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
@@ -22,6 +23,16 @@ class CreateUser(APIView):
                 return Response({'detail': 'User Created'}, status=status.HTTP_201_CREATED)
         return Response(reg_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+# Alternative way of setting csrf cookie
+@ensure_csrf_cookie
+def login_set_cookie(request):
+    """
+    `login_view` requires that a csrf cookie be set.
+    `getCsrfToken` in `auth.js` uses this cookie to
+    make a request to `login_view`
+    """
+    return JsonResponse({"details": "CSRF cookie set"})
 
 
 def get_csrf(request):

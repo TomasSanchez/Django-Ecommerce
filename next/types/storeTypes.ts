@@ -50,3 +50,11 @@ export type metaType = {
 	pageCount: number;
 	items_per_page: number;
 };
+
+export type cart_info = {
+	user: number;
+	paid: boolean;
+	with_delivery: boolean;
+	items_total: number;
+	total: number;
+};

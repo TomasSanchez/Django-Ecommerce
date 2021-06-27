@@ -1,21 +1,63 @@
-import { useEffect, useState } from "react";
+import { SyntheticEvent } from "react";
+import { useState } from "react";
+import { productType, imageType } from "../../types/storeTypes";
+import Cookies from "../../ui/js-cookie";
 
-const Product = ({ post }: any) => {
-	const [item, setItem] = useState({
-		product: post?.id,
+type propType = {
+	post: productType;
+};
+type itemType = {
+	product: number;
+	size: string;
+	color: string;
+	paper_type: string;
+	quantity: number;
+	image: imageType | string;
+};
+
+const Product = ({ post }: propType) => {
+	const [error, setError] = useState<string>("");
+	const [item, setItem] = useState<itemType>({
+		product: post.id,
 		size: "M",
 		color: "Wood",
 		paper_type: "Mate",
 		quantity: 1,
 		image:
-			post?.product_image.find((picture: any) => picture.is_feature) ||
-			"https://dummyimage.com/400x400", // || post?.product_image[0] indicating first picture if there are no feature images
+			post.product_image.find(
+				(picture: imageType) => picture.is_feature
+			) || "https://dummyimage.com/400x400", // || post?.product_image[0] indicating first picture if there are no feature images
 	});
 
 	const handleChange = (place: string, value: string | number) => {
 		setItem({ ...item, [place]: value });
 	};
 
+	const addToCart = async (e: SyntheticEvent) => {
+		e.preventDefault();
+		try {
+			const response = await fetch("http://localhost:8000/api/cart/add", {
+				headers: {
+					"Content-Type": "application/json",
+					"X-CSRFToken": Cookies.get("csrftoken"),
+				},
+				method: "POST",
+				credentials: "include",
+				body: JSON.stringify(item),
+			});
+			if (response.ok) {
+				// Router.push("/");
+				// ADD Modal pop to go to cart or continue shopping
+			}
+
+			if (response.status == 406) {
+				setError("Item Already in Cart");
+				throw new Error(error);
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	};
 	// changing the price according to size
 	var price = post?.medium_price;
 	switch (item.size) {
@@ -36,6 +78,9 @@ const Product = ({ post }: any) => {
 		<div>
 			<section className='text-gray-600 body-font overflow-hidden'>
 				<div className='container px-5 py-24 mx-auto'>
+					<div className='flex justify-items-center mb-8 ml-80'>
+						<h3 className='text-red-400'>{error}</h3>
+					</div>
 					<div className='lg:w-4/5 mx-auto flex flex-wrap'>
 						<img
 							alt='ecommerce'
@@ -237,7 +282,9 @@ const Product = ({ post }: any) => {
 								<span className='title-font font-medium text-2xl text-gray-900'>
 									${price}
 								</span>
-								<button className='flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded'>
+								<button
+									onClick={addToCart}
+									className='flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded'>
 									Add to Cart
 								</button>
 							</div>
@@ -254,6 +301,7 @@ export async function getServerSideProps(context: any) {
 		`http://127.0.0.1:8000/api/store/${context.params.id}`
 	);
 	const post = await res.json();
+	console.log("post from index: ", post);
 
 	if (!post) {
 		return {
