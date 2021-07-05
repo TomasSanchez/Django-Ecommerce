@@ -162,6 +162,33 @@ const SignUp = () => {
 											/>
 										</div>
 
+										<div className='col-span-6 sm:col-span-4'>
+											<label
+												htmlFor='password'
+												className='block text-sm font-medium text-gray-700'>
+												Password
+											</label>
+											<input
+												type='text'
+												name='password'
+												id='password'
+												value={user.password}
+												onChange={(e) =>
+													setUser({
+														...user,
+														password:
+															e.target.value,
+													})
+												}
+												autoComplete='email'
+												className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-2'
+												style={{
+													borderWidth: "0.5px",
+													height: "1.8rem",
+												}}
+											/>
+										</div>
+
 										<div className='col-span-6 sm:col-span-3'>
 											<label
 												htmlFor='country'
@@ -183,20 +210,20 @@ const SignUp = () => {
 											<label
 												htmlFor='street_address'
 												className='block text-sm font-medium text-gray-700'>
-												Street address / Password
+												Street address
 											</label>
 											<input
 												type='text'
 												name='street_address'
 												id='street_address'
-												value={user.password}
-												onChange={(e) =>
-													setUser({
-														...user,
-														password:
-															e.target.value,
-													})
-												}
+												// value={user.address}
+												// onChange={(e) =>
+												// 	setUser({
+												// 		...user,
+												// 		address:
+												// 			e.target.value,
+												// 	})
+												// }
 												autoComplete='street-address'
 												className='mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-2'
 												style={{
